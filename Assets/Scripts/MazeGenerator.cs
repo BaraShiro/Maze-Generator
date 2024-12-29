@@ -29,4 +29,6 @@ public abstract class MazeGenerator
         Height = height;
         Maze = new Maze(width, height);
     }
+
+    public abstract Awaitable Generate();
 }

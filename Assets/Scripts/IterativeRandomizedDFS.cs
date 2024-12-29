@@ -9,7 +9,7 @@ public class IterativeRandomizedDFS : MazeGenerator
 
     public IterativeRandomizedDFS(Vector2Int initial, int width, int height) : base(initial, width, height) { }
 
-    public async Awaitable Generate()
+    public override async Awaitable Generate()
     {
         // Choose the initial cell, mark it as visited and push it to the stack
         visited.Add(Initial, true);
@@ -45,7 +45,6 @@ public class IterativeRandomizedDFS : MazeGenerator
                 // Mark the chosen cell as visited and push it to the stack
                 visited.Add(chosen, true);
                 toSearch.Push(chosen);
-
 
                 e.Changes = new List<(Vector2Int position, Maze.MazeTile tile)>(2)
                 {
