@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 
 public class IterativeRandomizedDFS : MazeGenerator
@@ -7,7 +8,8 @@ public class IterativeRandomizedDFS : MazeGenerator
     private readonly Dictionary<Vector2Int, bool> visited = new Dictionary<Vector2Int, bool>();
     private readonly Stack<Vector2Int> toSearch = new Stack<Vector2Int>();
 
-    public IterativeRandomizedDFS(Vector2Int initial, int width, int height) : base(initial, width, height) { }
+    public IterativeRandomizedDFS(Vector2Int initial, int width, int height, float stepDuration, CancellationToken token)
+        : base(initial, width, height, stepDuration, token) { }
 
     public override async Awaitable Generate()
     {
@@ -20,7 +22,7 @@ public class IterativeRandomizedDFS : MazeGenerator
             Changes = new List<(Vector2Int position, Maze.MazeTile tile)>(1) { (Initial, Maze.Tile(Initial)) }
         };
         OnGenerationStep(e);
-        await Awaitable.WaitForSecondsAsync(0.2f, Application.exitCancellationToken);
+        await Awaitable.WaitForSecondsAsync(StepDuration, CancellationToken);
 
         // While the stack is not empty
         while (toSearch.Count > 0)
@@ -53,7 +55,7 @@ public class IterativeRandomizedDFS : MazeGenerator
                 };
                 OnGenerationStep(e);
 
-                await Awaitable.WaitForSecondsAsync(0.2f, Application.exitCancellationToken);
+                await Awaitable.WaitForSecondsAsync(StepDuration, CancellationToken);
             }
         }
     }

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 
 public class IterativeRandomizedKruskal: MazeGenerator
@@ -6,7 +7,8 @@ public class IterativeRandomizedKruskal: MazeGenerator
     private readonly List<(Vector2Int, Vector2Int)> walls = new List<(Vector2Int, Vector2Int)>();
     private readonly DisjointSet<Vector2Int> disjointSet = new DisjointSet<Vector2Int>();
 
-    public IterativeRandomizedKruskal(Vector2Int initial, int width, int height) : base(initial, width, height) { }
+    public IterativeRandomizedKruskal(Vector2Int initial, int width, int height, float stepDuration, CancellationToken token)
+        : base(initial, width, height, stepDuration, token) { }
 
     public override async Awaitable Generate()
     {
@@ -28,6 +30,7 @@ public class IterativeRandomizedKruskal: MazeGenerator
                 disjointSet.MakeSet(new Vector2Int(x, y));
             }
         }
+
         // For each wall, in some random order
         walls.Shuffle();
         foreach ((Vector2Int first, Vector2Int second) in walls)
@@ -50,7 +53,7 @@ public class IterativeRandomizedKruskal: MazeGenerator
                 };
                 OnGenerationStep(e);
 
-                await Awaitable.WaitForSecondsAsync(0.2f, Application.exitCancellationToken);
+                await Awaitable.WaitForSecondsAsync(StepDuration, CancellationToken);
             }
         }
     }

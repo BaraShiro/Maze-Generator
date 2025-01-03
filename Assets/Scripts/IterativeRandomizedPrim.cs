@@ -1,10 +1,12 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using UnityEngine;
 
 public class IterativeRandomizedPrim : MazeGenerator
 {
-    public IterativeRandomizedPrim(Vector2Int initial, int width, int height) : base(initial, width, height) { }
+    public IterativeRandomizedPrim(Vector2Int initial, int width, int height, float stepDuration, CancellationToken token)
+        : base(initial, width, height, stepDuration, token) { }
 
     // A hash set is not ideal, but better than a list, as we make more calls to contains than to retrieve
     // The ideal would be a data structure with O(1) operations for both contains and retrieve
@@ -20,7 +22,7 @@ public class IterativeRandomizedPrim : MazeGenerator
             Changes = new List<(Vector2Int position, Maze.MazeTile tile)>(1) { (Initial, Maze.Tile(Initial)) }
         };
         OnGenerationStep(e);
-        await Awaitable.WaitForSecondsAsync(0.2f, Application.exitCancellationToken);
+        await Awaitable.WaitForSecondsAsync(StepDuration, CancellationToken);
 
         // Iterate until the frontier set is empty
         while (frontier.Count > 0)
@@ -45,7 +47,7 @@ public class IterativeRandomizedPrim : MazeGenerator
                 (frontierCell, Maze.Tile(frontierCell))
             };
             OnGenerationStep(e);
-            await Awaitable.WaitForSecondsAsync(0.2f, Application.exitCancellationToken);
+            await Awaitable.WaitForSecondsAsync(StepDuration, CancellationToken);
         }
     }
 

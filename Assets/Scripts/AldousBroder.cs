@@ -1,11 +1,13 @@
 using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 
 public class AldousBroder : MazeGenerator
 {
-    private Dictionary<Vector2Int, bool> unvisited = new Dictionary<Vector2Int, bool>();
+    private readonly Dictionary<Vector2Int, bool> unvisited = new Dictionary<Vector2Int, bool>();
 
-    public AldousBroder(Vector2Int initial, int width, int height) : base(initial, width, height) { }
+    public AldousBroder(Vector2Int initial, int width, int height, float stepDuration, CancellationToken token)
+        : base(initial, width, height, stepDuration, token) { }
 
     public override async Awaitable Generate()
     {
@@ -26,7 +28,7 @@ public class AldousBroder : MazeGenerator
             Changes = new List<(Vector2Int position, Maze.MazeTile tile)>(1) { (Initial, Maze.Tile(current)) }
         };
         OnGenerationStep(e);
-        await Awaitable.WaitForSecondsAsync(0.2f, Application.exitCancellationToken);
+        await Awaitable.WaitForSecondsAsync(StepDuration, CancellationToken);
 
         // While there are unvisited cells
         while (unvisited.Count > 0)
@@ -49,8 +51,7 @@ public class AldousBroder : MazeGenerator
                     (neighbour, Maze.Tile(neighbour))
                 };
                 OnGenerationStep(e);
-                await Awaitable.WaitForSecondsAsync(0.2f, Application.exitCancellationToken);
-
+                await Awaitable.WaitForSecondsAsync(StepDuration, CancellationToken);
             }
             // Make the chosen neighbour the current cell.
             current = neighbour;

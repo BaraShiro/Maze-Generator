@@ -1,9 +1,14 @@
+using System;
+using System.Threading;
+using TMPro;
 using UnityEngine;
+using Slider = UnityEngine.UI.Slider;
 
 public class MazePainter : MonoBehaviour
 {
     [SerializeField] private MazeTileVisual mazeTilePrefab;
-
+    [SerializeField] private Vector2 offset;
+    [Space(10)]
     [SerializeField] private Sprite notConnectedSprite;
     [SerializeField] private Sprite upDeadEndSprite;
     [SerializeField] private Sprite rightDeadEndSprite;
@@ -19,28 +24,96 @@ public class MazePainter : MonoBehaviour
     [SerializeField] private Sprite leftTCrossingSprite;
     [SerializeField] private Sprite crossingSprite;
     [SerializeField] private Sprite verticalSprite;
+    [SerializeField] private Sprite verticalSpriteAlt;
     [SerializeField] private Sprite horizontalSprite;
+    [SerializeField] private Sprite horizontalSpriteAlt;
+    [Space(10)]
+    [SerializeField] private SeedInput seedInput;
+    [SerializeField] private TMP_Text generateButtonText;
+    [SerializeField] private Slider widthSlider;
+    [SerializeField] private Slider heightSlider;
+    [SerializeField] private Slider durationSlider;
+    [SerializeField] private TMP_Dropdown algoDropdown;
 
-    private MazeTileVisual[,] mazeVisualMatrix;
+    private MazeTileVisual[,] mazeVisualMatrix = new MazeTileVisual[0,0];
+
+    private bool running = false;
+
+    private CancellationTokenSource internalTokenSource = new CancellationTokenSource();
+    private CancellationToken internalToken;
 
     public async void GenerateMaze()
     {
-        int width = 10;
-        int height = 10;
+        if (running)
+        {
+            internalTokenSource.Cancel();
+            internalTokenSource = new CancellationTokenSource();
+            return;
+        }
 
+        internalToken = internalTokenSource.Token;
+        using CancellationTokenSource linkedCts = CancellationTokenSource.CreateLinkedTokenSource(internalToken, Application.exitCancellationToken);
+        running = true;
+        SetButtonText();
+
+        RNG.InitState(seedInput.SeedHash);
+        int width = Mathf.FloorToInt(widthSlider.value);
+        int height = Mathf.FloorToInt(heightSlider.value);
+        Vector2Int initial = new Vector2Int(RNG.Range(0, width), RNG.Range(0, height));
+        float stepDuration = durationSlider.value;
+
+        // Clean up old maze if it exists
+        foreach (MazeTileVisual mazeTileVisual in mazeVisualMatrix)
+        {
+            Destroy(mazeTileVisual.gameObject);
+        }
+
+        // Move painter so maze is in center
+        transform.position = (Vector3) offset + new Vector3(-(width / 2), -(height / 2));
+
+        // Create new empty maze
         mazeVisualMatrix = new MazeTileVisual[width, height];
         for (int x = 0; x < width; x++)
         {
             for (int y = 0; y < height; y++)
             {
-                mazeVisualMatrix[x,y] = Instantiate(mazeTilePrefab, new Vector3(x, y), Quaternion.identity, transform);
+                mazeVisualMatrix[x,y] = Instantiate(mazeTilePrefab, transform.position + new Vector3(x, y), Quaternion.identity, transform);
             }
         }
 
-        RNG.InitState(42);
-        IterativeRandomizedDFS iterativeRandomizedDFS = new IterativeRandomizedDFS(Vector2Int.zero, 10, 10);
-        iterativeRandomizedDFS.GenerationStep += MazeGenerator_GenerationStep;
-        await iterativeRandomizedDFS.Generate();
+        MazeGenerator mazeGenerator = ((AlgoDropdown.Algos)algoDropdown.value) switch
+        {
+            AlgoDropdown.Algos.DFS => new IterativeRandomizedDFS(initial, width, height, stepDuration, linkedCts.Token),
+            AlgoDropdown.Algos.Kruskal => new IterativeRandomizedKruskal(initial, width, height, stepDuration, linkedCts.Token),
+            AlgoDropdown.Algos.Prim => new IterativeRandomizedPrim(initial, width, height, stepDuration, linkedCts.Token),
+            AlgoDropdown.Algos.AldousBroder => new AldousBroder(initial, width, height, stepDuration, linkedCts.Token),
+            _ => throw new ArgumentOutOfRangeException()
+        };
+
+        mazeGenerator.GenerationStep += MazeGenerator_GenerationStep;
+
+
+        try
+        {
+            await mazeGenerator.Generate();
+        }
+        catch (OperationCanceledException e)
+        {
+            if (Application.exitCancellationToken.IsCancellationRequested)
+            {
+                Debug.Log("Operation cancelled from application exit.");
+            }
+            else if (internalToken.IsCancellationRequested)
+            {
+                Debug.Log("Operation cancelled by user.");
+                running = false;
+                SetButtonText();
+            }
+
+        }
+
+        running = false;
+        SetButtonText();
     }
 
     private void MazeGenerator_GenerationStep(object sender, MazeGenerator.GenerationStepEventArgs e)
@@ -61,8 +134,8 @@ public class MazePainter : MonoBehaviour
             {Up: false, Right: true, Down: false, Left: false} => leftDeadEndSprite,
             {Up: false, Right: false, Down: false, Left: true} => rightDeadEndSprite,
 
-            {Up: true, Right: false, Down: true, Left: false} => verticalSprite,
-            {Up: false, Right: true, Down: false, Left: true} => horizontalSprite,
+            {Up: true, Right: false, Down: true, Left: false} => RNG.Value > 0.5 ? verticalSprite : verticalSpriteAlt,
+            {Up: false, Right: true, Down: false, Left: true} => RNG.Value > 0.5 ? horizontalSprite : horizontalSpriteAlt,
 
             {Up: true, Right: true, Down: false, Left: false} => upRightCornerSprite,
             {Up: true, Right: false, Down: false, Left: true} => upLeftCornerSprite,
@@ -76,4 +149,9 @@ public class MazePainter : MonoBehaviour
 
             {Up: true, Right: true, Down: true, Left: true} => crossingSprite,
         };
+
+    private void SetButtonText()
+    {
+        generateButtonText.text = running ? "Cancel" : "Generate" ;
+    }
 }
