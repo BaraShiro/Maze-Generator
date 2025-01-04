@@ -12,24 +12,20 @@ public class IterativeRandomizedKruskal: MazeGenerator
 
     public override async Awaitable Generate()
     {
+        walls.Capacity = ((Width * Height) * 2) - (Width + Height);
+        disjointSet.EnsureCapacity(Width * Height);
+
         // Create a list of all walls, and create a set for each cell, each containing just one cell
-        for (int x = 0; x < Width; x++)
+        ForAllPositions((Vector2Int position) =>
         {
-            for (int y = 0; y < Height; y++)
-            {
-                if (y < Height - 1)
-                {
-                    walls.Add((new Vector2Int(x, y), new Vector2Int(x, y + 1)));
-                }
+            Vector2Int up = position + Vector2Int.up;
+            if (up.y < Height) walls.Add((position, up));
 
-                if (x < Width - 1)
-                {
-                    walls.Add((new Vector2Int(x, y), new Vector2Int(x + 1, y)));
-                }
+            Vector2Int right = position + Vector2Int.right;
+            if (right.x < Width) walls.Add((position, right));
 
-                disjointSet.MakeSet(new Vector2Int(x, y));
-            }
-        }
+            disjointSet.MakeSet(position);
+        });
 
         // For each wall, in some random order
         walls.Shuffle();
@@ -43,17 +39,7 @@ public class IterativeRandomizedKruskal: MazeGenerator
                 // Join the sets of the formerly divided cells
                 disjointSet.Union(first, second);
 
-                GenerationStepEventArgs e = new GenerationStepEventArgs
-                {
-                    Changes = new List<(Vector2Int position, Maze.MazeTile tile)>(2)
-                    {
-                        (first, Maze.Tile(first)),
-                        (second, Maze.Tile(second))
-                    }
-                };
-                OnGenerationStep(e);
-
-                await Awaitable.WaitForSecondsAsync(StepDuration, CancellationToken);
+                await GenerationStep(first, second);
             }
         }
     }

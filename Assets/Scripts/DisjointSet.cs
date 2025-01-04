@@ -22,7 +22,21 @@ public class DisjointSet<T> : IEnumerable<T> where T : IEquatable<T>
         }
     }
 
-    private readonly Dictionary<T, Node> nodes = new Dictionary<T, Node>();
+    private readonly Dictionary<T, Node> nodes;
+
+    public DisjointSet()
+    {
+       nodes = new Dictionary<T, Node>();
+    }
+    public DisjointSet(int capacity)
+    {
+        nodes = new Dictionary<T, Node>(capacity);
+    }
+
+    public void EnsureCapacity(int capacity)
+    {
+        nodes.EnsureCapacity(capacity);
+    }
 
     public int Count => nodes.Count;
 
@@ -63,12 +77,11 @@ public class DisjointSet<T> : IEnumerable<T> where T : IEquatable<T>
 
     public bool Union(T firstData, T secondData)
     {
-        // Find the set representatives for data1 and data2
+        // Find the set representatives for firstData and secondData
         Node firstRoot = FindSet(nodes[firstData]);
         Node secondRoot = FindSet(nodes[secondData]);
 
         // Part of the same set so nothing needs to be done
-        // if(firstRoot.Data.Equals(secondRoot.Data)) return;
         if(firstRoot == secondRoot) return false;
 
         // The set with the highest rank becomes the parent of the other set

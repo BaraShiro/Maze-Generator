@@ -90,14 +90,13 @@ public class MazePainter : MonoBehaviour
             _ => throw new ArgumentOutOfRangeException()
         };
 
-        mazeGenerator.GenerationStep += MazeGenerator_GenerationStep;
-
+        mazeGenerator.GenerationStepEvent += MazeGenerationStepEvent;
 
         try
         {
             await mazeGenerator.Generate();
         }
-        catch (OperationCanceledException e)
+        catch (OperationCanceledException)
         {
             if (Application.exitCancellationToken.IsCancellationRequested)
             {
@@ -109,14 +108,13 @@ public class MazePainter : MonoBehaviour
                 running = false;
                 SetButtonText();
             }
-
         }
 
         running = false;
         SetButtonText();
     }
 
-    private void MazeGenerator_GenerationStep(object sender, MazeGenerator.GenerationStepEventArgs e)
+    private void MazeGenerationStepEvent(object sender, MazeGenerator.GenerationStepEventArgs e)
     {
         foreach ((Vector2Int position, Maze.MazeTile tile) in e.Changes)
         {
