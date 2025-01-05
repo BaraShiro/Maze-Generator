@@ -14,7 +14,7 @@ public class IterativeRandomizedPrim : MazeGenerator
     private readonly HashSet<Vector2Int> frontier = new HashSet<Vector2Int>();
     private readonly HashSet<Vector2Int> inMaze = new HashSet<Vector2Int>();
 
-    public override async Awaitable Generate()
+    public override async Awaitable<Maze> Generate()
     {
         frontier.EnsureCapacity((Width * Height) / 4); // Rough estimate, probably not ideal
         inMaze.EnsureCapacity(Width * Height);
@@ -42,6 +42,8 @@ public class IterativeRandomizedPrim : MazeGenerator
 
             await GenerationStep(neighbourCell, frontierCell);
         }
+
+        return Maze;
     }
 
     private void MarkAsIn(Vector2Int cell)

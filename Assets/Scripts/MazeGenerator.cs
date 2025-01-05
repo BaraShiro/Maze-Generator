@@ -17,15 +17,14 @@ public abstract class MazeGenerator
         GenerationStepEvent?.Invoke(this, e);
     }
 
-
     protected Vector2Int Initial { get; }
     protected int Width { get; }
     protected int Height { get; }
     protected float StepDuration { get; }
     protected CancellationToken CancellationToken { get; }
-    protected Maze Maze { get; private set; }
+    protected Maze Maze { get; }
 
-    protected GenerationStepEventArgs EventArgs { get; set; }
+    protected GenerationStepEventArgs EventArgs { get; }
 
     protected MazeGenerator(Vector2Int initial, int width, int height, float stepDuration, CancellationToken token)
     {
@@ -38,7 +37,7 @@ public abstract class MazeGenerator
         EventArgs = new GenerationStepEventArgs();
     }
 
-    public abstract Awaitable Generate();
+    public abstract Awaitable<Maze> Generate();
 
     protected void ForAllPositions(Action<Vector2Int> action)
     {
@@ -80,6 +79,8 @@ public abstract class MazeGenerator
 
         };
         OnGenerationStepEvent(EventArgs);
+
+        if(StepDuration <= 0) return;
         await Awaitable.WaitForSecondsAsync(StepDuration, CancellationToken);
     }
 
@@ -91,6 +92,7 @@ public abstract class MazeGenerator
         };
         OnGenerationStepEvent(EventArgs);
 
+        if(StepDuration <= 0) return;
         await Awaitable.WaitForSecondsAsync(StepDuration, CancellationToken);
     }
 
@@ -103,6 +105,7 @@ public abstract class MazeGenerator
         };
         OnGenerationStepEvent(EventArgs);
 
+        if(StepDuration <= 0) return;
         await Awaitable.WaitForSecondsAsync(StepDuration, CancellationToken);
     }
 
@@ -111,6 +114,7 @@ public abstract class MazeGenerator
         EventArgs.Changes = positions;
         OnGenerationStepEvent(EventArgs);
 
+        if(StepDuration <= 0) return;
         await Awaitable.WaitForSecondsAsync(StepDuration, CancellationToken);
     }
 }

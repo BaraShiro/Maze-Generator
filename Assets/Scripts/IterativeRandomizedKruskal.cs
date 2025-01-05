@@ -10,7 +10,7 @@ public class IterativeRandomizedKruskal: MazeGenerator
     public IterativeRandomizedKruskal(Vector2Int initial, int width, int height, float stepDuration, CancellationToken token)
         : base(initial, width, height, stepDuration, token) { }
 
-    public override async Awaitable Generate()
+    public override async Awaitable<Maze> Generate()
     {
         walls.Capacity = ((Width * Height) * 2) - (Width + Height);
         disjointSet.EnsureCapacity(Width * Height);
@@ -42,5 +42,7 @@ public class IterativeRandomizedKruskal: MazeGenerator
                 await GenerationStep(first, second);
             }
         }
+
+        return Maze;
     }
 }

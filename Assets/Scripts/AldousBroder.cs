@@ -9,7 +9,7 @@ public class AldousBroder : MazeGenerator
     public AldousBroder(Vector2Int initial, int width, int height, float stepDuration, CancellationToken token)
         : base(initial, width, height, stepDuration, token) { }
 
-    public override async Awaitable Generate()
+    public override async Awaitable<Maze> Generate()
     {
         unvisited.EnsureCapacity(Width * Height);
 
@@ -45,5 +45,6 @@ public class AldousBroder : MazeGenerator
             current = neighbour;
         }
 
+        return Maze;
     }
 }

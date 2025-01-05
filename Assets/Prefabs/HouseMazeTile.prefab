@@ -1,0 +1,67 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &998634811994391362
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1984143080841680100, guid: 87f8400571df69d429c56062848d4ced, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1984143080841680100, guid: 87f8400571df69d429c56062848d4ced, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1984143080841680100, guid: 87f8400571df69d429c56062848d4ced, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1984143080841680100, guid: 87f8400571df69d429c56062848d4ced, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1984143080841680100, guid: 87f8400571df69d429c56062848d4ced, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1984143080841680100, guid: 87f8400571df69d429c56062848d4ced, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1984143080841680100, guid: 87f8400571df69d429c56062848d4ced, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1984143080841680100, guid: 87f8400571df69d429c56062848d4ced, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1984143080841680100, guid: 87f8400571df69d429c56062848d4ced, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1984143080841680100, guid: 87f8400571df69d429c56062848d4ced, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6869406943849085339, guid: 87f8400571df69d429c56062848d4ced, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: -1175669882, guid: 6db2f079cfa9923429a11e12d8a3e2d8, type: 3}
+    - target: {fileID: 6869406943849085339, guid: 87f8400571df69d429c56062848d4ced, type: 3}
+      propertyPath: m_SortingOrder
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8121758112223332672, guid: 87f8400571df69d429c56062848d4ced, type: 3}
+      propertyPath: m_Name
+      value: HouseMazeTile
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 87f8400571df69d429c56062848d4ced, type: 3}

@@ -11,7 +11,7 @@ public class IterativeRandomizedDFS : MazeGenerator
     public IterativeRandomizedDFS(Vector2Int initial, int width, int height, float stepDuration, CancellationToken token)
         : base(initial, width, height, stepDuration, token) { }
 
-    public override async Awaitable Generate()
+    public override async Awaitable<Maze> Generate()
     {
         // Choose the initial cell, mark it as visited and push it to the stack
         visited.Add(Initial);
@@ -46,5 +46,7 @@ public class IterativeRandomizedDFS : MazeGenerator
                 await GenerationStep(current, chosen);
             }
         }
+
+        return Maze;
     }
 }
