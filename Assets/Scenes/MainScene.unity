@@ -378,7 +378,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 773460911}
   m_Direction: 0
   m_MinValue: 10
-  m_MaxValue: 20
+  m_MaxValue: 30
   m_WholeNumbers: 1
   m_Value: 10
   m_OnValueChanged:
@@ -3092,7 +3092,6 @@ MonoBehaviour:
   startTilePrefab: {fileID: 7823256139613692207, guid: a5f2fccbe2b832c4f82944483812849f, type: 3}
   goalTilePrefab: {fileID: 7823256139613692207, guid: 5bb47492de0d67b46a2fb5e468356c8e, type: 3}
   houseTilePrefab: {fileID: 7823256139613692207, guid: fbd9847c78252cb4b9637c5e6e1f086a, type: 3}
-  offset: {x: 0.5, y: -5}
   notConnectedSprite: {fileID: -1583381062, guid: 6db2f079cfa9923429a11e12d8a3e2d8, type: 3}
   upDeadEndSprite: {fileID: -1865538036, guid: 6db2f079cfa9923429a11e12d8a3e2d8, type: 3}
   rightDeadEndSprite: {fileID: 454700910, guid: 6db2f079cfa9923429a11e12d8a3e2d8, type: 3}
@@ -6087,7 +6086,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1651809906}
   m_Direction: 0
   m_MinValue: 10
-  m_MaxValue: 20
+  m_MaxValue: 30
   m_WholeNumbers: 1
   m_Value: 10
   m_OnValueChanged:

@@ -12,6 +12,7 @@ public class AlgoDropdown : MonoBehaviour
         Kruskal = 1,
         Prim = 2,
         AldousBroder = 3,
+        Wilson = 4,
     }
 
     private TMP_Dropdown dropdown;

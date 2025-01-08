@@ -111,6 +111,7 @@ public class MazePainter : MonoBehaviour
             AlgoDropdown.Algos.Kruskal => new IterativeRandomizedKruskal(initial, width, height, stepDuration, linkedCts.Token),
             AlgoDropdown.Algos.Prim => new IterativeRandomizedPrim(initial, width, height, stepDuration, linkedCts.Token),
             AlgoDropdown.Algos.AldousBroder => new AldousBroder(initial, width, height, stepDuration, linkedCts.Token),
+            AlgoDropdown.Algos.Wilson => new Wilson(initial, width, height, stepDuration, linkedCts.Token),
             _ => throw new ArgumentOutOfRangeException()
         };
         mazeGenerator.GenerationStepEvent += MazeGenerationStepEvent;
