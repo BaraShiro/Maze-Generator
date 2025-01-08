@@ -13,7 +13,7 @@ public class MazePainter : MonoBehaviour
     [SerializeField] private MazeTileVisual startTilePrefab;
     [SerializeField] private MazeTileVisual goalTilePrefab;
     [SerializeField] private MazeTileVisual houseTilePrefab;
-    [SerializeField] private Vector2 offset;
+    // [SerializeField] private Vector2 offset;
     [Space(10)]
     [SerializeField] private Sprite notConnectedSprite;
     [SerializeField] private Sprite upDeadEndSprite;
@@ -89,7 +89,11 @@ public class MazePainter : MonoBehaviour
         float stepDuration = durationSlider.value;
 
         // Move painter so the maze is in the center
-        transform.position = (Vector3) offset + new Vector3(-(width / 2), -(height / 2));
+        Vector3 offset = new Vector3(0.5f, -(height / 4f));
+        transform.position = new Vector3(-(width / 2f), -(height / 2f)) + offset;
+
+        // Set camera size to include the entire maze
+        if (Camera.main) Camera.main.orthographicSize = Mathf.Max(width, height);
 
         // Clean up old maze if it exists
         CleanUpMaze();
