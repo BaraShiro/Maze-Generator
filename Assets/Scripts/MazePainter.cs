@@ -291,18 +291,15 @@ public class MazePainter : MonoBehaviour
         {
             MazeTileVisual houseDecoration = Instantiate(houseTilePrefab, transform.position + position, Quaternion.identity, transform);
             houseDecorations.Add(houseDecoration);
-            if(stepDuration <= 0) return;
-            await Awaitable.WaitForSecondsAsync(stepDuration, token);
+            if (stepDuration > 0) await Awaitable.WaitForSecondsAsync(stepDuration, token);
         }
 
         startDecoration = Instantiate(startTilePrefab, transform.position, Quaternion.identity, transform);
-        if(stepDuration <= 0) return;
-        await Awaitable.WaitForSecondsAsync(stepDuration, token);
+        if (stepDuration > 0) await Awaitable.WaitForSecondsAsync(stepDuration, token);
 
         Vector3 goalOffset = new Vector3(solvedMaze.Width - 1, solvedMaze.Height - 1);
         goalDecoration = Instantiate(goalTilePrefab, transform.position + goalOffset, Quaternion.identity, transform);
-        if(stepDuration <= 0) return;
-        await Awaitable.WaitForSecondsAsync(stepDuration, token);
+        if (stepDuration > 0) await Awaitable.WaitForSecondsAsync(stepDuration, token);
     }
 
     private void CleanUpMaze()
