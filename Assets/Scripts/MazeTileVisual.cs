@@ -3,8 +3,8 @@ using UnityEngine;
 [RequireComponent(typeof(SpriteRenderer))]
 public class MazeTileVisual : MonoBehaviour
 {
-    private static Color markedColour = new Color(1f, 0.4f, 0.4f);
-    private static Color unmarkedColour = Color.white;
+    private static Color markedColour = new Color(1f, 0.15f, 0.15f);
+    private static Color unmarkedColour = new Color(1f, 0.95f, 0.8f);
 
     private SpriteRenderer spriteRenderer;
 

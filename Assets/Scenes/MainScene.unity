@@ -3239,24 +3239,24 @@ MonoBehaviour:
   startTilePrefab: {fileID: 7823256139613692207, guid: a5f2fccbe2b832c4f82944483812849f, type: 3}
   goalTilePrefab: {fileID: 7823256139613692207, guid: 5bb47492de0d67b46a2fb5e468356c8e, type: 3}
   houseTilePrefab: {fileID: 7823256139613692207, guid: fbd9847c78252cb4b9637c5e6e1f086a, type: 3}
-  notConnectedSprite: {fileID: -1583381062, guid: 6db2f079cfa9923429a11e12d8a3e2d8, type: 3}
-  upDeadEndSprite: {fileID: -1865538036, guid: 6db2f079cfa9923429a11e12d8a3e2d8, type: 3}
-  rightDeadEndSprite: {fileID: 454700910, guid: 6db2f079cfa9923429a11e12d8a3e2d8, type: 3}
-  downDeadEndSprite: {fileID: 320759094, guid: 6db2f079cfa9923429a11e12d8a3e2d8, type: 3}
-  leftDeadEndSprite: {fileID: -1164248830, guid: 6db2f079cfa9923429a11e12d8a3e2d8, type: 3}
-  upLeftCornerSprite: {fileID: -248640306, guid: 6db2f079cfa9923429a11e12d8a3e2d8, type: 3}
-  upRightCornerSprite: {fileID: -1379534052, guid: 6db2f079cfa9923429a11e12d8a3e2d8, type: 3}
-  downRightCornerSprite: {fileID: -1453350334737186109, guid: 6db2f079cfa9923429a11e12d8a3e2d8, type: 3}
-  downLeftCornerSprite: {fileID: -1153488569, guid: 6db2f079cfa9923429a11e12d8a3e2d8, type: 3}
-  upTCrossingSprite: {fileID: -1164296692, guid: 6db2f079cfa9923429a11e12d8a3e2d8, type: 3}
-  rightTCrossingSprite: {fileID: -1779352702, guid: 6db2f079cfa9923429a11e12d8a3e2d8, type: 3}
-  downTCrossingSprite: {fileID: -351049432, guid: 6db2f079cfa9923429a11e12d8a3e2d8, type: 3}
-  leftTCrossingSprite: {fileID: 2132118065, guid: 6db2f079cfa9923429a11e12d8a3e2d8, type: 3}
-  crossingSprite: {fileID: -733384012, guid: 6db2f079cfa9923429a11e12d8a3e2d8, type: 3}
-  verticalSprite: {fileID: -2090010576, guid: 6db2f079cfa9923429a11e12d8a3e2d8, type: 3}
-  verticalSpriteAlt: {fileID: 482520428, guid: 6db2f079cfa9923429a11e12d8a3e2d8, type: 3}
-  horizontalSprite: {fileID: 1579646915, guid: 6db2f079cfa9923429a11e12d8a3e2d8, type: 3}
-  horizontalSpriteAlt: {fileID: 394018975, guid: 6db2f079cfa9923429a11e12d8a3e2d8, type: 3}
+  notConnectedSprite: {fileID: -2455287069041890485, guid: f7793bd3de9d1564daf6e9a68873b18a, type: 3}
+  upDeadEndSprite: {fileID: 1432774421400288080, guid: f7793bd3de9d1564daf6e9a68873b18a, type: 3}
+  rightDeadEndSprite: {fileID: -3772098893637499282, guid: f7793bd3de9d1564daf6e9a68873b18a, type: 3}
+  downDeadEndSprite: {fileID: -6813189574185817458, guid: f7793bd3de9d1564daf6e9a68873b18a, type: 3}
+  leftDeadEndSprite: {fileID: 1550008670, guid: f7793bd3de9d1564daf6e9a68873b18a, type: 3}
+  upLeftCornerSprite: {fileID: 1761957491966546689, guid: f7793bd3de9d1564daf6e9a68873b18a, type: 3}
+  upRightCornerSprite: {fileID: -8435285650344880516, guid: f7793bd3de9d1564daf6e9a68873b18a, type: 3}
+  downRightCornerSprite: {fileID: 8490642196906846815, guid: f7793bd3de9d1564daf6e9a68873b18a, type: 3}
+  downLeftCornerSprite: {fileID: 1873917168148291061, guid: f7793bd3de9d1564daf6e9a68873b18a, type: 3}
+  upTCrossingSprite: {fileID: 3400160013776356846, guid: f7793bd3de9d1564daf6e9a68873b18a, type: 3}
+  rightTCrossingSprite: {fileID: 4035501790466999928, guid: f7793bd3de9d1564daf6e9a68873b18a, type: 3}
+  downTCrossingSprite: {fileID: 778136270091268006, guid: f7793bd3de9d1564daf6e9a68873b18a, type: 3}
+  leftTCrossingSprite: {fileID: -8717017754119436831, guid: f7793bd3de9d1564daf6e9a68873b18a, type: 3}
+  crossingSprite: {fileID: 8266258911003420344, guid: f7793bd3de9d1564daf6e9a68873b18a, type: 3}
+  verticalSprite: {fileID: -8420670720628680731, guid: f7793bd3de9d1564daf6e9a68873b18a, type: 3}
+  verticalSpriteAlt: {fileID: 4755373664117421245, guid: f7793bd3de9d1564daf6e9a68873b18a, type: 3}
+  horizontalSprite: {fileID: 7988907048659085410, guid: f7793bd3de9d1564daf6e9a68873b18a, type: 3}
+  horizontalSpriteAlt: {fileID: 2376107565742220442, guid: f7793bd3de9d1564daf6e9a68873b18a, type: 3}
   seedInput: {fileID: 892431570}
   widthSlider: {fileID: 43236011}
   heightSlider: {fileID: 2140654235}
