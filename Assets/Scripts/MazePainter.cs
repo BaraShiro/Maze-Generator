@@ -7,14 +7,18 @@ using UnityEngine;
 using UnityEngine.UI;
 using Slider = UnityEngine.UI.Slider;
 
+/// <summary>
+/// Paints a visual representation of a maze on the game canvas.
+/// </summary>
 public class MazePainter : MonoBehaviour
 {
+    [Header("Prefabs")]
     [SerializeField] private MazeTileVisual mazeTilePrefab;
     [SerializeField] private MazeTileVisual startTilePrefab;
     [SerializeField] private MazeTileVisual goalTilePrefab;
     [SerializeField] private MazeTileVisual houseTilePrefab;
-    // [SerializeField] private Vector2 offset;
     [Space(10)]
+    [Header("Graphics")]
     [SerializeField] private Sprite notConnectedSprite;
     [SerializeField] private Sprite upDeadEndSprite;
     [SerializeField] private Sprite rightDeadEndSprite;
@@ -34,6 +38,7 @@ public class MazePainter : MonoBehaviour
     [SerializeField] private Sprite horizontalSprite;
     [SerializeField] private Sprite horizontalSpriteAlt;
     [Space(10)]
+    [Header("UI references")]
     [SerializeField] private SeedInput seedInput;
     [SerializeField] private Slider widthSlider;
     [SerializeField] private Slider heightSlider;
@@ -58,6 +63,11 @@ public class MazePainter : MonoBehaviour
     private CancellationTokenSource internalTokenSource = new CancellationTokenSource();
     private CancellationToken internalToken;
 
+    /// <summary>
+    /// Sets up the generator by reading values from the UI, runs the generator, and decorates the generated maze.
+    /// </summary>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown if the <see cref="AlgoDropdown.Algos"/> value from the
+    /// algos dropdown does not represent a valid maze generation algorithm.</exception>
     public async void GenerateMaze()
     {
         // If the solver is running, don't do anything
@@ -153,6 +163,9 @@ public class MazePainter : MonoBehaviour
         SetSolveButtonState();
     }
 
+    /// <summary>
+    /// Sets up the solver by reading values from the UI, and then runs the solver.
+    /// </summary>
     public async void SolveMaze()
     {
         // If the generator is running, don't do anything
@@ -220,7 +233,12 @@ public class MazePainter : MonoBehaviour
         SetGenerateButtonState();
     }
 
-    private void MazeGenerationStepEvent(object sender, MazeGenerator.GenerationStepEventArgs e)
+    /// <summary>
+    /// The maze generation step event handler.
+    /// Changes the maze visual according to the list of changes contained in <paramref name="e"/>.
+    /// </summary>
+    /// <param name="sender">The sender of the event.</param>
+    /// <param name="e">The event args containing a list of changes to the maze.</param>
     private void mazeGenerator_MazeGenerationStepEvent(object sender, MazeGenerator.GenerationStepEventArgs e)
     {
         foreach ((Vector2Int position, Maze.MazeTile tile) in e.Changes)
@@ -229,7 +247,13 @@ public class MazePainter : MonoBehaviour
         }
     }
 
-    private void MazeSolveStepEvent(object sender, MazeSolver.SolveStepEventArgs e)
+    /// <summary>
+    /// The maze solve step event handler.
+    /// Changes the maze visual by painting or unpainting a maze tile based on information contained in <paramref name="e"/>.
+    /// </summary>
+    /// <param name="sender">The sender of the event.</param>
+    /// <param name="e">The event args containing the position of the tile,
+    /// and whether it should be painted or unpainted.</param>
     private void mazeSolver_MazeSolveStepEvent(object sender, MazeSolver.SolveStepEventArgs e)
     {
         if (e.Paint)
@@ -242,6 +266,11 @@ public class MazePainter : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Transforms a tile value to a sprite representing that tile.
+    /// </summary>
+    /// <param name="tile">The tile to be transformed.</param>
+    /// <returns>A sprite representing the tile.</returns>
     private Sprite GetSpriteFromMazeTile(Maze.MazeTile tile) =>
         tile switch
         {
@@ -268,8 +297,14 @@ public class MazePainter : MonoBehaviour
             {Up: true, Right: true, Down: true, Left: true} => crossingSprite,
         };
 
+    /// <summary>
+    /// Places a start, a goal, and several house decorations on top of the maze.
+    /// </summary>
+    /// <param name="stepDuration">The duration to wait between placing decoration, in seconds.</param>
+    /// <param name="token">A cancellation token to cancel the operation.</param>
     private async Awaitable DecorateMaze(float stepDuration, CancellationToken token)
     {
+        // Get all possible house positions, i.e. dead ends
         List<Vector3> housePositions = new List<Vector3>();
         for (int x = 0; x < solvedMaze.Width; x++)
         {
@@ -290,8 +325,11 @@ public class MazePainter : MonoBehaviour
                 }
             }
         }
+
+        // Shuffle the positions
         housePositions.Shuffle();
 
+        // Place just the right number of houses in the maze
         int numberOfHouses = Mathf.FloorToInt((solvedMaze.Width + solvedMaze.Height) * 0.4f);
         houseDecorations = new List<MazeTileVisual>(numberOfHouses);
         foreach (Vector3 position in housePositions.Take(numberOfHouses))
@@ -301,14 +339,19 @@ public class MazePainter : MonoBehaviour
             if (stepDuration > 0) await Awaitable.WaitForSecondsAsync(stepDuration, token);
         }
 
+        // Add the start
         startDecoration = Instantiate(startTilePrefab, transform.position, Quaternion.identity, transform);
         if (stepDuration > 0) await Awaitable.WaitForSecondsAsync(stepDuration, token);
 
+        // Add the goal
         Vector3 goalOffset = new Vector3(solvedMaze.Width - 1, solvedMaze.Height - 1);
         goalDecoration = Instantiate(goalTilePrefab, transform.position + goalOffset, Quaternion.identity, transform);
         if (stepDuration > 0) await Awaitable.WaitForSecondsAsync(stepDuration, token);
     }
 
+    /// <summary>
+    /// Disposes of all maze visuals, preparing for a new maze to be generated
+    /// </summary>
     private void CleanUpMaze()
     {
         foreach (MazeTileVisual mazeTileVisual in mazeVisualMatrix)
@@ -325,21 +368,34 @@ public class MazePainter : MonoBehaviour
         if(goalDecoration) Destroy(goalDecoration.gameObject);
     }
 
+    /// <summary>
+    /// Sets the text of the generate-button based on whether the generator is running or not.
+    /// </summary>
     private void SetGenerateButtonText()
     {
         generateButtonText.text = generating ? "Cancel" : "Generate" ;
     }
 
+    /// <summary>
+    /// Sets the text of the solve-button based on whether the solver is running or not.
+    /// </summary>
     private void SetSolveButtonText()
     {
         solveButtonText.text = solving ? "Cancel" : "Solve" ;
     }
 
+    /// <summary>
+    /// Sets the interactable state of the generate-button based on whether the solver is running or not.
+    /// </summary>
     private void SetGenerateButtonState()
     {
         generateButton.interactable = !solving;
     }
 
+    /// <summary>
+    /// Sets the interactable state of the solve-button based on whether the generator is running or not,
+    /// and if a generated maze is available for solving.
+    /// </summary>
     private void SetSolveButtonState()
     {
         solveButton.interactable = (!generating) && generated;

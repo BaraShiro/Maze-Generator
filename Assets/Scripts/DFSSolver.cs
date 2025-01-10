@@ -1,8 +1,10 @@
-using System;
 using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
 
+/// <summary>
+/// A recursive depth-first search maze solver.
+/// </summary>
 public class DFSSolver : MazeSolver
 {
     private readonly HashSet<Vector2Int> discovered = new HashSet<Vector2Int>();
@@ -15,6 +17,14 @@ public class DFSSolver : MazeSolver
         await SolveAuxiliary(Start);
     }
 
+    /// <summary>
+    /// Recursively searches the maze depth first for the goal, starting at <paramref name="position"/>.
+    /// </summary>
+    /// <param name="position">The starting position.</param>
+    /// <returns>
+    /// <see langword="true"/> if the goal was found in this branch of the maze,
+    /// otherwise <see langword="false"/>.
+    /// </returns>
     private async Awaitable<bool> SolveAuxiliary(Vector2Int position)
     {
         // Mark position as discovered

@@ -15,7 +15,7 @@ public static class RNG
     /// <summary>
     /// Initialized the state of the Random instance with a given seed value. The seed must be non-zero.
     /// </summary>
-    /// <param name="seed">The seed to initialize with.</param>
+    /// <param name="seed">The seed to initialise with.</param>
     public static void InitState(uint seed)
     {
         random.InitState(seed);

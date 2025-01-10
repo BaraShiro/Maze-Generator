@@ -2,6 +2,10 @@ using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
 
+/// <summary>
+/// A recursive backtracker algorithm. Has a low branching factor, and contains many long corridors.
+/// </summary>
+/// <seealso href="https://en.wikipedia.org/wiki/Maze_generation_algorithm#Randomized_depth-first_search"/>
 public class IterativeRandomizedDFS : MazeGenerator
 {
 

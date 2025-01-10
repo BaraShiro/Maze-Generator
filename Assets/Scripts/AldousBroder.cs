@@ -2,6 +2,13 @@ using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
 
+/// <summary>
+/// Creates a uniform spanning tree. It's one of the least efficient maze algorithms.
+/// </summary>
+/// <remarks>
+/// Is not guaranteed to ever finish, as we could keep randomly selecting visited neighbours indefinitely.
+/// </remarks>
+///  <seealso href="https://en.wikipedia.org/wiki/Maze_generation_algorithm#Aldous-Broder_algorithm"/>
 public class AldousBroder : MazeGenerator
 {
     private readonly HashSet<Vector2Int> unvisited = new HashSet<Vector2Int>();
@@ -13,10 +20,8 @@ public class AldousBroder : MazeGenerator
     {
         unvisited.EnsureCapacity(Width * Height);
 
-        ForAllPositions((Vector2Int position) =>
-        {
-            unvisited.Add(position);
-        });
+        // Mark all cells as unvisited
+        ForAllPositions((Vector2Int position) => unvisited.Add(position));
 
         // Pick a random cell as the current cell and mark it as visited
         Vector2Int current = Initial;

@@ -4,6 +4,11 @@ using System.Threading;
 using Unity.VisualScripting;
 using UnityEngine;
 
+/// <summary>
+/// A modified and simplified version of Prim's algorithm that creates a minimal spanning tree.
+/// It will usually be relatively easy to find the way to the starting cell, but hard to find the way anywhere else.
+/// </summary>
+///  <seealso href="https://en.wikipedia.org/wiki/Maze_generation_algorithm#Iterative_randomized_Prim's_algorithm_(without_stack,_without_sets)"/>
 public class IterativeRandomizedPrim : MazeGenerator
 {
     public IterativeRandomizedPrim(Vector2Int initial, int width, int height, float stepDuration, CancellationToken token)
@@ -46,6 +51,10 @@ public class IterativeRandomizedPrim : MazeGenerator
         return Maze;
     }
 
+    /// <summary>
+    /// Marks a cell to be in the maze, and adds it's neighbours to the frontier.
+    /// </summary>
+    /// <param name="cell">The cell to mark.</param>
     private void MarkAsIn(Vector2Int cell)
     {
         inMaze.Add(cell);

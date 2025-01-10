@@ -3,9 +3,15 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
+/// <summary>
+/// A dropdown menu with the different maze generation algorithms.
+/// </summary>
 [RequireComponent(typeof(TMP_Dropdown))]
 public class AlgoDropdown : MonoBehaviour
 {
+    /// <summary>
+    /// The different maze generation algorithms.
+    /// </summary>
     public enum Algos
     {
         DFS = 0,

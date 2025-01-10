@@ -2,6 +2,11 @@ using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
 
+/// <summary>
+/// Uses a disjoint-set data structure to create a minimal spanning tree.
+/// Produces regular patterns which are fairly easy to solve.
+/// </summary>
+/// <seealso href="https://en.wikipedia.org/wiki/Maze_generation_algorithm#Iterative_randomized_Kruskal's_algorithm_(with_sets)"/>
 public class IterativeRandomizedKruskal: MazeGenerator
 {
     private readonly List<(Vector2Int, Vector2Int)> walls = new List<(Vector2Int, Vector2Int)>();

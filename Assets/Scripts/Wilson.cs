@@ -1,9 +1,15 @@
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using UnityEngine;
 
+/// <summary>
+///  Uses loop-erased random walks to generate an unbiased sample from the uniform distribution over all mazes.
+/// </summary>
+/// <remarks>
+/// Is not guaranteed to ever finish, as it could theoretically get stuck in an infinite random walk.
+/// </remarks>
+///  <seealso href="https://en.wikipedia.org/wiki/Maze_generation_algorithm#Wilson's_algorithm"/>
 public class Wilson : MazeGenerator
 {
     private readonly HashSet<Vector2Int> unvisited = new HashSet<Vector2Int>();
@@ -43,6 +49,14 @@ public class Wilson : MazeGenerator
         return Maze;
     }
 
+    /// <summary>
+    /// Go on a random walk through the unexplored parts of the maze, starting at <paramref name="position"/>,
+    /// until an explored part is discovered, disregarding any loops on the way.
+    /// </summary>
+    /// /// <remarks>
+    /// Is not guaranteed to ever finish, as the RNG values could potentially lead it in a series of never-ending loops.
+    /// </remarks>
+    /// <param name="position">The starting position of the walk.</param>
     private void RandomWalk(Vector2Int position)
     {
         // Initialise walk and cameFrom
