@@ -118,7 +118,7 @@ public class MazePainter : MonoBehaviour
             AlgoDropdown.Algos.Wilson => new Wilson(initial, width, height, stepDuration, linkedCts.Token),
             _ => throw new ArgumentOutOfRangeException()
         };
-        mazeGenerator.GenerationStepEvent += MazeGenerationStepEvent;
+        mazeGenerator.GenerationStepEvent += mazeGenerator_MazeGenerationStepEvent;
 
         // Run generator
         try
@@ -156,7 +156,7 @@ public class MazePainter : MonoBehaviour
     public async void SolveMaze()
     {
         // If the generator is running, don't do anything
-        if(generating) return;
+        if (generating) return;
 
         // If the solver is running, cancel the solver
         if (solving)
@@ -187,13 +187,13 @@ public class MazePainter : MonoBehaviour
         Vector2Int goal = new Vector2Int(solvedMaze.Width - 1, solvedMaze.Height - 1);
 
         // Setup solver
-        DFSSolver solver = new DFSSolver(solvedMaze, start, goal, stepDuration, linkedCts.Token);
-        solver.SolveStepEvent += MazeSolveStepEvent;
+        MazeSolver mazeSolver = new DFSSolver(solvedMaze, start, goal, stepDuration, linkedCts.Token);
+        mazeSolver.SolveStepEvent += mazeSolver_MazeSolveStepEvent;
 
         // Run solver
         try
         {
-            await solver.Solve();
+            await mazeSolver.Solve();
         }
         catch (OperationCanceledException)
         {
@@ -221,6 +221,7 @@ public class MazePainter : MonoBehaviour
     }
 
     private void MazeGenerationStepEvent(object sender, MazeGenerator.GenerationStepEventArgs e)
+    private void mazeGenerator_MazeGenerationStepEvent(object sender, MazeGenerator.GenerationStepEventArgs e)
     {
         foreach ((Vector2Int position, Maze.MazeTile tile) in e.Changes)
         {
@@ -229,6 +230,7 @@ public class MazePainter : MonoBehaviour
     }
 
     private void MazeSolveStepEvent(object sender, MazeSolver.SolveStepEventArgs e)
+    private void mazeSolver_MazeSolveStepEvent(object sender, MazeSolver.SolveStepEventArgs e)
     {
         if (e.Paint)
         {

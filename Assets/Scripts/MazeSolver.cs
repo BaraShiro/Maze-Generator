@@ -14,18 +14,22 @@ public abstract class MazeSolver
     public event EventHandler<SolveStepEventArgs> SolveStepEvent;
 
     private void OnSolveStepEvent(SolveStepEventArgs e)
+    protected virtual void OnSolveStepEvent(SolveStepEventArgs e)
     {
         SolveStepEvent?.Invoke(this, e);
     }
 
     protected SolveStepEventArgs EventArgs { get; set; } = new SolveStepEventArgs();
+    private SolveStepEventArgs EventArgs { get; } = new SolveStepEventArgs();
 
     protected Maze Maze { get; }
     protected Vector2Int Start { get; }
     protected Vector2Int Goal { get; }
     protected float StepDuration { get; }
     protected CancellationToken CancellationToken { get; }
+    private float StepDuration { get; }
 
+    private CancellationToken CancellationToken { get; }
     protected MazeSolver(Maze maze, Vector2Int start, Vector2Int goal, float stepDuration, CancellationToken token)
     {
         Maze = maze;
@@ -36,6 +40,8 @@ public abstract class MazeSolver
     }
 
     protected async Awaitable GenerationStep(Vector2Int position, bool paint)
+    public abstract Awaitable Solve();
+    protected async Awaitable SolveStep(Vector2Int position, bool paint)
     {
         EventArgs.Position = position;
         EventArgs.Paint = paint;
@@ -47,8 +53,11 @@ public abstract class MazeSolver
     }
 
     protected List<Vector2Int> GetNeighbours(Vector2Int position, Maze.MazeTile tile)
+    protected List<Vector2Int> GetNeighbours(Vector2Int position)
     {
         List<Vector2Int> edges = new List<Vector2Int>(4);
+
+        Maze.MazeTile tile = Maze.Tile(position);
 
         if (tile.Up) edges.Add(position + Vector2Int.up);
         if (tile.Right) edges.Add(position + Vector2Int.right);

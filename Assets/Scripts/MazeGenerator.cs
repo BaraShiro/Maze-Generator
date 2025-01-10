@@ -13,6 +13,7 @@ public abstract class MazeGenerator
     public event EventHandler<GenerationStepEventArgs> GenerationStepEvent;
 
     protected void OnGenerationStepEvent(GenerationStepEventArgs e)
+    protected virtual void OnGenerationStepEvent(GenerationStepEventArgs e)
     {
         GenerationStepEvent?.Invoke(this, e);
     }
@@ -22,6 +23,8 @@ public abstract class MazeGenerator
     protected int Height { get; }
     protected float StepDuration { get; }
     protected CancellationToken CancellationToken { get; }
+    private float StepDuration { get; }
+    private CancellationToken CancellationToken { get; }
     protected Maze Maze { get; }
 
     protected GenerationStepEventArgs EventArgs { get; }
@@ -34,7 +37,6 @@ public abstract class MazeGenerator
         StepDuration = stepDuration;
         CancellationToken = token;
         Maze = new Maze(width, height);
-        EventArgs = new GenerationStepEventArgs();
     }
 
     public abstract Awaitable<Maze> Generate();
@@ -79,6 +81,7 @@ public abstract class MazeGenerator
 
         };
         OnGenerationStepEvent(EventArgs);
+    protected async Awaitable InitialGenerationStep() => await GenerationStep(Initial);
 
         if(StepDuration <= 0) return;
         await Awaitable.WaitForSecondsAsync(StepDuration, CancellationToken);
@@ -90,10 +93,7 @@ public abstract class MazeGenerator
         {
             (position, Maze.Tile(position)),
         };
-        OnGenerationStepEvent(EventArgs);
-
-        if(StepDuration <= 0) return;
-        await Awaitable.WaitForSecondsAsync(StepDuration, CancellationToken);
+        await GenerationStep();
     }
 
     protected async Awaitable GenerationStep(Vector2Int firstPosition, Vector2Int secondPosition)
@@ -103,15 +103,16 @@ public abstract class MazeGenerator
             (firstPosition, Maze.Tile(firstPosition)),
             (secondPosition, Maze.Tile(secondPosition))
         };
-        OnGenerationStepEvent(EventArgs);
-
-        if(StepDuration <= 0) return;
-        await Awaitable.WaitForSecondsAsync(StepDuration, CancellationToken);
+        await GenerationStep();
     }
 
     protected async Awaitable GenerationStep(List<(Vector2Int position, Maze.MazeTile tile)> positions)
     {
         EventArgs.Changes = positions;
+        await GenerationStep();
+    }
+    private async Awaitable GenerationStep()
+    {
         OnGenerationStepEvent(EventArgs);
 
         if(StepDuration <= 0) return;

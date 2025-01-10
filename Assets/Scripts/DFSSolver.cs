@@ -10,7 +10,7 @@ public class DFSSolver : MazeSolver
     public DFSSolver(Maze maze, Vector2Int start, Vector2Int goal, float stepDuration, CancellationToken token)
         : base(maze, start, goal, stepDuration, token) { }
 
-    public async Awaitable Solve()
+    public override async Awaitable Solve()
     {
         await SolveAuxiliary(Start);
     }
@@ -21,13 +21,13 @@ public class DFSSolver : MazeSolver
         discovered.Add(position);
 
         // Paint the tile when searching forward
-        await GenerationStep(position, true);
+        await SolveStep(position, true);
 
         // If the position equals the goal, we are done and don't need to search more
         if (position == Goal) return true;
 
         // Search all neighbours
-        foreach (Vector2Int edge in GetNeighbours(position, Maze.Tile(position)))
+        foreach (Vector2Int edge in GetNeighbours(position))
         {
             // If a neighbour is not discovered, recursively call solver
             if (!discovered.Contains(edge))
@@ -40,7 +40,7 @@ public class DFSSolver : MazeSolver
         }
 
         // Unpaint the tile when backtracking
-        await GenerationStep(position, false);
+        await SolveStep(position, false);
 
         // We didn't find the goal in this branch
         return false;
