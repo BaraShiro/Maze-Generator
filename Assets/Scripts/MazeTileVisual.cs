@@ -6,9 +6,6 @@ using UnityEngine;
 [RequireComponent(typeof(SpriteRenderer))]
 public class MazeTileVisual : MonoBehaviour
 {
-    private static Color markedColour = new Color(1f, 0.15f, 0.15f);
-    private static Color unmarkedColour = new Color(1f, 0.95f, 0.8f);
-
     private SpriteRenderer spriteRenderer;
 
     private void Awake()
@@ -25,19 +22,29 @@ public class MazeTileVisual : MonoBehaviour
         spriteRenderer.sprite = newSprite;
     }
 
+    public void Hide()
+    {
+        spriteRenderer.sprite = MazePainter.Instance.EmptySprite;
+    }
+
+    public void Paint()
+    {
+        spriteRenderer.color = MazePainter.Instance.PaintedColor;
+    }
+
     /// <summary>
     /// Sets the colour of the sprite to <see cref="markedColour"/>.
     /// </summary>
-    public void SetColourMarked()
+    public void Mark()
     {
-        spriteRenderer.color = markedColour;
+        spriteRenderer.color = MazePainter.Instance.MarkedColor;
     }
 
     /// <summary>
     /// Sets the colour of the sprite to <see cref="unmarkedColour"/>.
     /// </summary>
-    public void SetColourUnmarked()
+    public void Unpaint()
     {
-        spriteRenderer.color = unmarkedColour;
+        spriteRenderer.color = MazePainter.Instance.UnpaintedColor;
     }
 }

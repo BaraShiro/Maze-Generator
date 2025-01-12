@@ -10,7 +10,7 @@ using Slider = UnityEngine.UI.Slider;
 /// <summary>
 /// Paints a visual representation of a maze on the game canvas.
 /// </summary>
-public class MazePainter : MonoBehaviour
+public class MazePainter : SingletonMonoBehaviour<MazePainter>
 {
     [Header("Prefabs")]
     [SerializeField] private MazeTileVisual mazeTilePrefab;
@@ -18,7 +18,13 @@ public class MazePainter : MonoBehaviour
     [SerializeField] private MazeTileVisual goalTilePrefab;
     [SerializeField] private MazeTileVisual houseTilePrefab;
     [Space(10)]
+    [Header("Colours")]
+    [SerializeField] private Color unpaintedColor;
+    [SerializeField] private Color paintedColor;
+    [SerializeField] private Color markedColor;
+    [Space(10)]
     [Header("Graphics")]
+    [SerializeField] private Sprite emptySprite;
     [SerializeField] private Sprite notConnectedSprite;
     [SerializeField] private Sprite upDeadEndSprite;
     [SerializeField] private Sprite rightDeadEndSprite;
@@ -48,6 +54,7 @@ public class MazePainter : MonoBehaviour
     [SerializeField] private TMP_Text generateButtonText;
     [SerializeField] private Button solveButton;
     [SerializeField] private TMP_Text solveButtonText;
+    [SerializeField] private RectTransform paintCanvasTransform;
 
 
     private MazeTileVisual[,] mazeVisualMatrix = new MazeTileVisual[0,0];
@@ -62,6 +69,11 @@ public class MazePainter : MonoBehaviour
 
     private CancellationTokenSource internalTokenSource = new CancellationTokenSource();
     private CancellationToken internalToken;
+
+    public Color UnpaintedColor => unpaintedColor;
+    public Color PaintedColor => paintedColor;
+    public Color MarkedColor => markedColor;
+    public Sprite EmptySprite => emptySprite;
 
     /// <summary>
     /// Sets up the generator by reading values from the UI, runs the generator, and decorates the generated maze.
@@ -98,12 +110,18 @@ public class MazePainter : MonoBehaviour
         Vector2Int initial = new Vector2Int(RNG.Range(0, width), RNG.Range(0, height));
         float stepDuration = durationSlider.value;
 
-        // Move painter so the maze is in the center
-        Vector3 offset = new Vector3(0.5f, -(height / 4f));
-        transform.position = new Vector3(-(width / 2f), -(height / 2f)) + offset;
-
         // Set camera size to include the entire maze
-        if (Camera.main) Camera.main.orthographicSize = Mathf.Max(width, height);
+        if (Camera.main) Camera.main.orthographicSize = Mathf.Ceil(Mathf.Max(width, height) / 2f);
+
+        // Move painter so the maze is in the center
+        if (Camera.main)
+        {
+            Vector3 offset = new Vector3(-(width / 2f) + 0.5f, -(height / 2f) + 0.5f);
+            Vector3 painterPosition = Camera.main.ScreenToWorldPoint(paintCanvasTransform.position);
+            painterPosition.z = 0;
+            painterPosition += offset;
+            transform.position = painterPosition;
+        }
 
         // Clean up old maze if it exists
         CleanUpMaze();
@@ -191,7 +209,7 @@ public class MazePainter : MonoBehaviour
         // Unpaint maze
         foreach (MazeTileVisual mazeTileVisual in mazeVisualMatrix)
         {
-            mazeTileVisual.SetColourUnmarked();
+            mazeTileVisual.Unpaint();
         }
 
         // Setup solver data
@@ -258,11 +276,11 @@ public class MazePainter : MonoBehaviour
     {
         if (e.Paint)
         {
-            mazeVisualMatrix[e.Position.x, e.Position.y].SetColourMarked();
+            mazeVisualMatrix[e.Position.x, e.Position.y].Paint();
         }
         else
         {
-            mazeVisualMatrix[e.Position.x, e.Position.y].SetColourUnmarked();
+            mazeVisualMatrix[e.Position.x, e.Position.y].Unpaint();
         }
     }
 
