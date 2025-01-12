@@ -13,7 +13,8 @@ public abstract class MazeGenerator
     /// </summary>
     public class GenerationStepEventArgs : EventArgs
     {
-        public List<(Vector2Int position, Maze.MazeTile tile)> Changes;
+        public List<(Vector2Int position, Maze.MazeTile tile, bool mark)> Changes;
+        public bool Reset = false;
     }
 
     /// <summary>
@@ -140,19 +141,19 @@ public abstract class MazeGenerator
     /// <summary>
     /// A generation step representing the initial change in an empty maze.
     /// </summary>
-    protected async Awaitable InitialGenerationStep() => await GenerationStep(Initial);
+    protected async Awaitable InitialGenerationStep(bool mark = false) => await GenerationStep(Initial, true);
 
     /// <summary>
     /// A generation step representing a change in a single position in the maze.
     /// </summary>
     /// <param name="position">The position that has changed.</param>
-    protected async Awaitable GenerationStep(Vector2Int position)
+    protected async Awaitable GenerationStep(Vector2Int position, bool mark = false, bool noWait = false)
     {
-        EventArgs.Changes = new List<(Vector2Int position, Maze.MazeTile tile)>(1)
+        EventArgs.Changes = new List<(Vector2Int position, Maze.MazeTile tile, bool mark)>(1)
         {
-            (position, Maze.Tile(position)),
+            (position, Maze.Tile(position), mark),
         };
-        await GenerationStep();
+        await GenerationStep(noWait);
     }
 
     /// <summary>
@@ -160,12 +161,12 @@ public abstract class MazeGenerator
     /// </summary>
     /// <param name="firstPosition">The first position that has changed.</param>
     /// <param name="secondPosition">The second position that has changed.</param>
-    protected async Awaitable GenerationStep(Vector2Int firstPosition, Vector2Int secondPosition)
+    protected async Awaitable GenerationStep(Vector2Int firstPosition, Vector2Int secondPosition, bool markFirst = false, bool markSecond = false)
     {
-        EventArgs.Changes = new List<(Vector2Int position, Maze.MazeTile tile)>(2)
+        EventArgs.Changes = new List<(Vector2Int position, Maze.MazeTile tile, bool mark)>(2)
         {
-            (firstPosition, Maze.Tile(firstPosition)),
-            (secondPosition, Maze.Tile(secondPosition))
+            (firstPosition, Maze.Tile(firstPosition), markFirst),
+            (secondPosition, Maze.Tile(secondPosition), markSecond)
         };
         await GenerationStep();
     }
@@ -174,20 +175,22 @@ public abstract class MazeGenerator
     /// A generation step representing a change in several positions in the maze.
     /// </summary>
     /// <param name="positions">The positions that have changed.</param>
-    protected async Awaitable GenerationStep(List<(Vector2Int position, Maze.MazeTile tile)> positions)
+    protected async Awaitable GenerationStep(List<(Vector2Int position, Maze.MazeTile tile, bool mark)> positions, bool reset = false)
     {
         EventArgs.Changes = positions;
+        EventArgs.Reset = reset;
         await GenerationStep();
+        EventArgs.Reset = false;
     }
 
     /// <summary>
     /// A generation step representing a change in the maze.
     /// </summary>
-    private async Awaitable GenerationStep()
+    private async Awaitable GenerationStep(bool noWait = false)
     {
         OnGenerationStepEvent(EventArgs);
 
-        if(StepDuration <= 0) return;
+        if (StepDuration <= 0 || noWait) return;
         await Awaitable.WaitForSecondsAsync(StepDuration, CancellationToken);
     }
 }

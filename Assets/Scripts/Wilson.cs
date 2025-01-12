@@ -26,6 +26,7 @@ public class Wilson : MazeGenerator
 
         // Add the starting position to the maze
         unvisited.Remove(Initial);
+        await GenerationStep(Initial);
 
         // While there are unvisited positions, add a loop-erased random walk to the maze
         while (unvisited.Count > 0)
@@ -34,16 +35,21 @@ public class Wilson : MazeGenerator
             Vector2Int position = unvisited.ElementAt(RNG.Range(0, unvisited.Count));
 
             // Perform a random walk starting at this location
-            RandomWalk(position);
+            await RandomWalk(position);
 
             // Add the random walk to the maze
             for (int i = 0; i < walk.Count - 1; i++)
             {
                 unvisited.Remove(walk[i]);
                 Maze.RemoveWall(walk[i], walk[i + 1]);
-                await GenerationStep(walk[i], walk[i + 1]);
             }
             unvisited.Remove(walk[^1]);
+
+            // Update maze visual
+            await GenerationStep(new List<(Vector2Int, Maze.MazeTile, bool)>(
+                from cell in walk
+                select (cell, Maze.Tile(cell), false)
+            ));
         }
 
         return Maze;
@@ -57,7 +63,7 @@ public class Wilson : MazeGenerator
     /// Is not guaranteed to ever finish, as the RNG values could potentially lead it in a series of never-ending loops.
     /// </remarks>
     /// <param name="position">The starting position of the walk.</param>
-    private void RandomWalk(Vector2Int position)
+    private async Awaitable RandomWalk(Vector2Int position)
     {
         // Initialise walk and cameFrom
         walk.Clear();
@@ -78,17 +84,27 @@ public class Wilson : MazeGenerator
             {
                 // Erase the loop, rewinding the path to its earlier state
                 int loopIndex = walk.IndexOf(neighbour) + 1;
+
+                List<(Vector2Int position, Maze.MazeTile tile, bool mark)> loop = new (walk.Count - loopIndex);
+
                 for (int i = walk.Count - 1; i >= loopIndex; i--)
                 {
+                    loop.Add((walk[i], Maze.Tile(walk[i]), false));
                     cameFrom.Remove(walk[i]);
                     walk.RemoveAt(i);
                 }
+
+                // Reset the tiles of the loop to empty
+                await GenerationStep(loop, reset: true);
             }
             else
             {
                 // Otherwise, add it to the walk and keep track of where we came from
                 walk.Add(neighbour);
                 cameFrom.Add(neighbour, position);
+
+                // Visualise the walk
+                await GenerationStep(position, neighbour, true, true);
             }
 
             // Repeat with the neighbouring position

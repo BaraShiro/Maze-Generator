@@ -47,7 +47,13 @@ public class IterativeRandomizedDFS : MazeGenerator
                 visited.Add(chosen);
                 toSearch.Push(chosen);
 
-                await GenerationStep(current, chosen);
+                // Paint the next tile to be searched, add a delay to animate
+                await GenerationStep(current, chosen, false, true);
+            }
+            else
+            {
+                // Unpaint as we backtrack, but with no delay
+                await GenerationStep(current, false, true);
             }
         }
 

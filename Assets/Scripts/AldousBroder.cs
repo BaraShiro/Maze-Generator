@@ -43,12 +43,17 @@ public class AldousBroder : MazeGenerator
                 Maze.RemoveWall(current, neighbour);
                 // Mark the chosen neighbour as visited.
                 unvisited.Remove(neighbour);
-
-                await GenerationStep(current, neighbour);
             }
+
+            // Paint the new tile and unpaint behind us
+            await GenerationStep(current, neighbour, false, true);
+
             // Make the chosen neighbour the current cell.
             current = neighbour;
         }
+
+        // Unpaint the last cell, with no delay
+        await GenerationStep(current, false, true);
 
         return Maze;
     }

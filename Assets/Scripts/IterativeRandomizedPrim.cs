@@ -25,7 +25,7 @@ public class IterativeRandomizedPrim : MazeGenerator
         inMaze.EnsureCapacity(Width * Height);
 
         // Mark a random cell as being “in” the maze
-        MarkAsIn(Initial);
+        await MarkAsIn(Initial);
         await InitialGenerationStep();
 
         // Iterate until the frontier set is empty
@@ -43,7 +43,7 @@ public class IterativeRandomizedPrim : MazeGenerator
             Maze.RemoveWall(neighbourCell, frontierCell);
 
             // Mark the frontier cell as being “in” the maze
-            MarkAsIn(frontierCell);
+            await MarkAsIn(frontierCell);
 
             await GenerationStep(neighbourCell, frontierCell);
         }
@@ -55,10 +55,16 @@ public class IterativeRandomizedPrim : MazeGenerator
     /// Marks a cell to be in the maze, and adds it's neighbours to the frontier.
     /// </summary>
     /// <param name="cell">The cell to mark.</param>
-    private void MarkAsIn(Vector2Int cell)
+    private async Awaitable MarkAsIn(Vector2Int cell)
     {
         inMaze.Add(cell);
         List<Vector2Int> neighbours = GetNeighbours(cell, (Vector2Int position) =>  !inMaze.Contains(position));
         frontier.AddRange(neighbours); // Contains in O(1), ideal
+
+        // Paint the frontier
+        await GenerationStep(new List<(Vector2Int, Maze.MazeTile, bool)>(
+            from neighbour in neighbours
+            select (neighbour, Maze.Tile(neighbour), true)
+            ));
     }
 }

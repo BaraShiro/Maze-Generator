@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using TMPro;
 using UnityEngine;
@@ -60,7 +59,6 @@ public class MazePainter : SingletonMonoBehaviour<MazePainter>
     private MazeTileVisual[,] mazeVisualMatrix = new MazeTileVisual[0,0];
     private MazeTileVisual startDecoration;
     private MazeTileVisual goalDecoration;
-    private List<MazeTileVisual> houseDecorations = new List<MazeTileVisual>();
     private Maze solvedMaze;
 
     private bool generating = false;
@@ -144,6 +142,7 @@ public class MazePainter : SingletonMonoBehaviour<MazePainter>
             AlgoDropdown.Algos.Prim => new IterativeRandomizedPrim(initial, width, height, stepDuration, linkedCts.Token),
             AlgoDropdown.Algos.AldousBroder => new AldousBroder(initial, width, height, stepDuration, linkedCts.Token),
             AlgoDropdown.Algos.Wilson => new Wilson(initial, width, height, stepDuration, linkedCts.Token),
+            AlgoDropdown.Algos.AldousBroderWilson => new AldousBroderWilson(initial, width, height, stepDuration, linkedCts.Token),
             _ => throw new ArgumentOutOfRangeException()
         };
         mazeGenerator.GenerationStepEvent += mazeGenerator_MazeGenerationStepEvent;
@@ -259,9 +258,18 @@ public class MazePainter : SingletonMonoBehaviour<MazePainter>
     /// <param name="e">The event args containing a list of changes to the maze.</param>
     private void mazeGenerator_MazeGenerationStepEvent(object sender, MazeGenerator.GenerationStepEventArgs e)
     {
-        foreach ((Vector2Int position, Maze.MazeTile tile) in e.Changes)
+        foreach ((Vector2Int position, Maze.MazeTile tile, bool mark) in e.Changes)
         {
-            mazeVisualMatrix[position.x, position.y].ChangeSprite(GetSpriteFromMazeTile(tile));
+            mazeVisualMatrix[position.x, position.y].ChangeSprite(e.Reset ? EmptySprite : GetSpriteFromMazeTile(tile));
+
+            if (mark)
+            {
+                mazeVisualMatrix[position.x, position.y].Mark();
+            }
+            else
+            {
+                mazeVisualMatrix[position.x, position.y].Unpaint();
+            }
         }
     }
 
@@ -347,16 +355,6 @@ public class MazePainter : SingletonMonoBehaviour<MazePainter>
         // Shuffle the positions
         housePositions.Shuffle();
 
-        // Place just the right number of houses in the maze
-        int numberOfHouses = Mathf.FloorToInt((solvedMaze.Width + solvedMaze.Height) * 0.4f);
-        houseDecorations = new List<MazeTileVisual>(numberOfHouses);
-        foreach (Vector3 position in housePositions.Take(numberOfHouses))
-        {
-            MazeTileVisual houseDecoration = Instantiate(houseTilePrefab, transform.position + position, Quaternion.identity, transform);
-            houseDecorations.Add(houseDecoration);
-            if (stepDuration > 0) await Awaitable.WaitForSecondsAsync(stepDuration, token);
-        }
-
         // Add the start
         startDecoration = Instantiate(startTilePrefab, transform.position, Quaternion.identity, transform);
         if (stepDuration > 0) await Awaitable.WaitForSecondsAsync(stepDuration, token);
@@ -377,13 +375,8 @@ public class MazePainter : SingletonMonoBehaviour<MazePainter>
             if(mazeTileVisual) Destroy(mazeTileVisual.gameObject);
         }
 
-        foreach (MazeTileVisual houseDecoration in houseDecorations)
-        {
-            if(houseDecoration) Destroy(houseDecoration.gameObject);
-        }
-
-        if(startDecoration) Destroy(startDecoration.gameObject);
-        if(goalDecoration) Destroy(goalDecoration.gameObject);
+        if (startDecoration) Destroy(startDecoration.gameObject);
+        if (goalDecoration) Destroy(goalDecoration.gameObject);
     }
 
     /// <summary>
