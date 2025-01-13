@@ -17,3 +17,5 @@ If the algorithm still produces a uniform spanning tree or not is left as an exe
 [barashiro.github.io/Maze-Generator/](https://barashiro.github.io/Maze-Generator/)
 
 ## Video Demo
+https://github.com/user-attachments/assets/6866f828-6b0b-4d68-9181-2ad1ce29e90e
+
