@@ -9,7 +9,7 @@ using UnityEngine;
 /// <remarks>
 /// Is not guaranteed to ever finish, as it could theoretically get stuck in an infinite random walk.
 /// </remarks>
-///  <seealso href="https://en.wikipedia.org/wiki/Maze_generation_algorithm#Wilson's_algorithm"/>
+/// <seealso href="https://en.wikipedia.org/wiki/Maze_generation_algorithm#Wilson's_algorithm"/>
 public class Wilson : MazeGenerator
 {
     private readonly HashSet<Vector2Int> unvisited = new HashSet<Vector2Int>();

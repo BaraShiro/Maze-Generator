@@ -8,7 +8,7 @@ using UnityEngine;
 /// <remarks>
 /// Is not guaranteed to ever finish, as we could keep randomly selecting visited neighbours indefinitely.
 /// </remarks>
-///  <seealso href="https://en.wikipedia.org/wiki/Maze_generation_algorithm#Aldous-Broder_algorithm"/>
+/// <seealso href="https://en.wikipedia.org/wiki/Maze_generation_algorithm#Aldous-Broder_algorithm"/>
 public class AldousBroder : MazeGenerator
 {
     private readonly HashSet<Vector2Int> unvisited = new HashSet<Vector2Int>();

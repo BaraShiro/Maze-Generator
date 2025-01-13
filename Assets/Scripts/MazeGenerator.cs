@@ -147,6 +147,8 @@ public abstract class MazeGenerator
     /// A generation step representing a change in a single position in the maze.
     /// </summary>
     /// <param name="position">The position that has changed.</param>
+    /// <param name="mark">Whether to paint the tile at <paramref name="position"/> as marked.</param>
+    /// <param name="noWait">Whether to skip the waiting time and not animate the change.</param>
     protected async Awaitable GenerationStep(Vector2Int position, bool mark = false, bool noWait = false)
     {
         EventArgs.Changes = new List<(Vector2Int position, Maze.MazeTile tile, bool mark)>(1)
@@ -161,6 +163,8 @@ public abstract class MazeGenerator
     /// </summary>
     /// <param name="firstPosition">The first position that has changed.</param>
     /// <param name="secondPosition">The second position that has changed.</param>
+    /// <param name="markFirst">Whether to paint the tile at <paramref name="firstPosition"/> as marked.</param>
+    /// <param name="markSecond">Whether to paint the tile at <paramref name="secondPosition"/> as marked.</param>
     protected async Awaitable GenerationStep(Vector2Int firstPosition, Vector2Int secondPosition, bool markFirst = false, bool markSecond = false)
     {
         EventArgs.Changes = new List<(Vector2Int position, Maze.MazeTile tile, bool mark)>(2)
@@ -175,6 +179,8 @@ public abstract class MazeGenerator
     /// A generation step representing a change in several positions in the maze.
     /// </summary>
     /// <param name="positions">The positions that have changed.</param>
+    /// <param name="reset">Whether to reset the graphics for the tiles in <paramref name="positions"/>
+    /// to the default empty state</param>
     protected async Awaitable GenerationStep(List<(Vector2Int position, Maze.MazeTile tile, bool mark)> positions, bool reset = false)
     {
         EventArgs.Changes = positions;

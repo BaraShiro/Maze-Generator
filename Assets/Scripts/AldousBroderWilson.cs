@@ -3,6 +3,11 @@ using System.Linq;
 using System.Threading;
 using UnityEngine;
 
+/// <summary>
+/// An attempt to combine Aldous Broder and Wilson to leverage their respective strengths to combat their weaknesses.
+/// Inspired by a comment on a post on
+/// <see href="https://weblog.jamisbuck.org/2011/1/20/maze-generation-wilson-s-algorithm">The Buckblog</see>.
+/// </summary>
 public class AldousBroderWilson : MazeGenerator
 {
     private readonly HashSet<Vector2Int> unvisited = new HashSet<Vector2Int>();
@@ -16,13 +21,17 @@ public class AldousBroderWilson : MazeGenerator
     public override async Awaitable<Maze> Generate()
     {
         int total = Width * Height;
-        int threshold = total - (total / 3);
+        int threshold = total - (total / 3); // Supposedly a good cutoff point
         await GenerateAldousBroder(threshold);
         await GenerateWilson();
 
         return Maze;
     }
 
+    /// <summary>
+    /// Runs Aldous Broder until the number of cells in <see cref="unvisited"/> drops below <paramref name="threshold"/>.
+    /// </summary>
+    /// <param name="threshold">The cutoff threshold before switching over to Wilson</param>
     private async Awaitable GenerateAldousBroder(int threshold)
     {
         unvisited.EnsureCapacity(Width * Height);
@@ -63,6 +72,9 @@ public class AldousBroderWilson : MazeGenerator
         await GenerationStep(current, false, true);
     }
 
+    /// <summary>
+    /// Runs Wilson on a maze pre-baked by Aldous Broder.
+    /// </summary>
     private async Awaitable GenerateWilson()
     {
         // While there are unvisited positions, add a loop-erased random walk to the maze
