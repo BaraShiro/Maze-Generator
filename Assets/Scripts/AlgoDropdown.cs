@@ -19,6 +19,7 @@ public class AlgoDropdown : MonoBehaviour
         Prim = 2,
         AldousBroder = 3,
         Wilson = 4,
+        AldousBroderWilson = 5,
     }
 
     private TMP_Dropdown dropdown;
